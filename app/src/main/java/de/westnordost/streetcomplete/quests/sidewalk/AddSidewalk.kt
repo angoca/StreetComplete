@@ -2,14 +2,14 @@ package de.westnordost.streetcomplete.quests.sidewalk
 
 import de.westnordost.streetcomplete.R
 import de.westnordost.streetcomplete.data.elementfilter.toElementFilterExpression
-import de.westnordost.streetcomplete.data.meta.ANYTHING_UNPAVED
-import de.westnordost.streetcomplete.data.meta.MAXSPEED_TYPE_KEYS
 import de.westnordost.streetcomplete.data.osm.geometry.ElementPolylinesGeometry
 import de.westnordost.streetcomplete.data.osm.mapdata.Element
 import de.westnordost.streetcomplete.data.osm.mapdata.MapDataWithGeometry
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmElementQuestType
 import de.westnordost.streetcomplete.data.osm.osmquests.Tags
 import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement.PEDESTRIAN
+import de.westnordost.streetcomplete.osm.ANYTHING_UNPAVED
+import de.westnordost.streetcomplete.osm.MAXSPEED_TYPE_KEYS
 import de.westnordost.streetcomplete.osm.estimateCycleTrackWidth
 import de.westnordost.streetcomplete.osm.estimateParkingOffRoadWidth
 import de.westnordost.streetcomplete.osm.estimateRoadwayWidth
@@ -20,7 +20,7 @@ import de.westnordost.streetcomplete.osm.sidewalk.Sidewalk.INVALID
 import de.westnordost.streetcomplete.osm.sidewalk.SidewalkSides
 import de.westnordost.streetcomplete.osm.sidewalk.applyTo
 import de.westnordost.streetcomplete.osm.sidewalk.createSidewalkSides
-import de.westnordost.streetcomplete.util.isNearAndAligned
+import de.westnordost.streetcomplete.util.math.isNearAndAligned
 
 class AddSidewalk : OsmElementQuestType<SidewalkSides> {
     private val maybeSeparatelyMappedSidewalksFilter by lazy { """
@@ -106,10 +106,19 @@ class AddSidewalk : OsmElementQuestType<SidewalkSides> {
         // streets that may have sidewalk tagging
         private val roadsFilter by lazy { """
             ways with
-              highway ~ trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|service
+              (
+                (
+                  highway ~ trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|service
+                  and motorroad != yes
+                  and foot != no
+                )
+                or
+                (
+                  highway ~ motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|service
+                  and (foot ~ yes|designated or bicycle ~ yes|designated)
+                )
+              )
               and area != yes
-              and motorroad != yes
-              and foot != no
               and access !~ private|no
         """.toElementFilterExpression() }
 
@@ -125,7 +134,7 @@ class AddSidewalk : OsmElementQuestType<SidewalkSides> {
         * */
         private val untaggedRoadsFilter by lazy { """
             ways with
-              highway ~ trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential
+              highway ~ motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential
               and !sidewalk and !sidewalk:both and !sidewalk:left and !sidewalk:right
               and (
                 !maxspeed
@@ -137,6 +146,7 @@ class AddSidewalk : OsmElementQuestType<SidewalkSides> {
                 lit = yes
                 or highway = residential
                 or ~${(MAXSPEED_TYPE_KEYS + "maxspeed").joinToString("|")} ~ .*urban|.*zone.*
+                or (foot ~ yes|designated and highway ~ motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link)
               )
               and foot != use_sidepath
               and bicycle != use_sidepath

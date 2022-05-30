@@ -233,13 +233,13 @@
                     "label": "Tipo"
                 },
                 "animal_boarding": {
-                    "label": "Para animais"
+                    "label": "Animais"
                 },
                 "animal_breeding": {
-                    "label": "Para animais"
+                    "label": "Animais"
                 },
                 "animal_shelter": {
-                    "label": "Para animais"
+                    "label": "Animais"
                 },
                 "architect": {
                     "label": "Arquiteto",
@@ -508,11 +508,6 @@
                 "check_date": {
                     "label": "Última data de verificação",
                     "placeholder": "AAAA-MM-DD"
-                },
-                "circumference": {
-                    "label": "Circunferência",
-                    "placeholder": " 1 m, 20 cm, 30 in...",
-                    "terms": "círculo,circunferências"
                 },
                 "clothes": {
                     "label": "Roupas"
@@ -1006,6 +1001,9 @@
                 "fire_hydrant/diameter": {
                     "label": "Diâmetro (mm, polegadas ou letras)",
                     "terms": "diâmetros"
+                },
+                "fire_hydrant/position": {
+                    "label": "Posição"
                 },
                 "fire_hydrant/pressure": {
                     "label": "Pressão (bar)",
@@ -1966,6 +1964,8 @@
                         "cans": "Latas",
                         "cardboard": "Cartão",
                         "clothes": "Roupas",
+                        "cooking_oil": "Óleo alimentar",
+                        "engine_oil": "Óleo de motores",
                         "glass": "Vidro",
                         "glass_bottles": "Recipientes de vidro",
                         "green_waste": "Resíduos vegetais",
@@ -3782,10 +3782,6 @@
                     "name": "Máquina de validação de bilhetes",
                     "terms": "bilhetes,validação,validar,validador,máquina,sistema,tickets,títulos"
                 },
-                "amenity/toilets": {
-                    "name": "Casas de banho",
-                    "terms": "instalações sanitárias,sanitário,gabinete sanitário,banheiros,toilette,lavabo,wc,w.c."
-                },
                 "amenity/toilets/disposal/flush": {
                     "name": "Autoclismo",
                     "terms": "flush toilets,autoclismo de descarga,retrete de descarga,descarga de água,retrete,sanita"
@@ -4874,10 +4870,6 @@
                 "highway/bus_stop": {
                     "name": "Paragem de autocarro"
                 },
-                "highway/construction": {
-                    "name": "Estrada em construção",
-                    "terms": "fechada,obras,estrada encerrada,acesso vedado"
-                },
                 "highway/corridor": {
                     "name": "Corredor interior",
                     "terms": "indoor corridor,passagem,interno,galeria,átrio"
@@ -5727,6 +5719,10 @@
                 "leisure/pitch/netball": {
                     "name": "Campo de netbol",
                     "terms": "netball,terreno de netbol,netbol,netbola,campo,desporto,bola"
+                },
+                "leisure/pitch/padel": {
+                    "name": "Campo de padel",
+                    "terms": "desporto,desportivo,sport,recinto,ténis,raquetes,esportivo,esporte,jogo,jogar"
                 },
                 "leisure/pitch/paintball": {
                     "name": "Campo de paintball",
@@ -7561,7 +7557,7 @@
                     "terms": "interior,decoração,interiores"
                 },
                 "shop/jewelry": {
-                    "name": "Ouriversaria",
+                    "name": "Ourivesaria",
                     "terms": "joalharia,joalheria,jóias,joias,bijuteria,joalheiro,joalheira"
                 },
                 "shop/kiosk": {
@@ -7836,7 +7832,7 @@
                     "terms": "vacuum cleaner,aspirador,aspiradores,aspirar"
                 },
                 "shop/variety_store": {
-                    "name": "Loja dos chineses",
+                    "name": "Loja de variedades",
                     "terms": "loja dos 300,loja dos trezentos,bijuterias,adereços,quinquilharia"
                 },
                 "shop/video": {

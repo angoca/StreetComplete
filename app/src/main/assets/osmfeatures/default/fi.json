@@ -406,7 +406,10 @@
                 "castle_type": {
                     "label": "Tyyppi",
                     "options": {
-                        "manor": "Kartano"
+                        "fortress": "linnoitus",
+                        "kremlin": "kreml",
+                        "manor": "kartano",
+                        "palace": "palatsi"
                     }
                 },
                 "changing_table": {
@@ -423,10 +426,6 @@
                 "check_date": {
                     "label": "Tarkistettu viimeksi",
                     "placeholder": "YYYY-MM-DD"
-                },
-                "circumference": {
-                    "label": "Ympärysmitta",
-                    "placeholder": "1 m, 20 cm, 30 in..."
                 },
                 "clothes": {
                     "label": "Vaatteet"
@@ -1438,8 +1437,8 @@
                         "rooftop": "katolla",
                         "sheds": "metallikatos",
                         "street_side": "kadunvarsi",
-                        "surface": "Pysäköintikenttä",
-                        "underground": "Pysäköintiluola"
+                        "surface": "kaduntasoinen pysäköintialue",
+                        "underground": "pysäköintiluola"
                     }
                 },
                 "parking/orientation": {
@@ -2061,7 +2060,7 @@
                     "label": "Päällyste",
                     "options": {
                         "artificial_turf": "tekonurmi",
-                        "asphalt": "asvaltti",
+                        "asphalt": "asfaltti",
                         "concrete": "betoni",
                         "dirt": "multa",
                         "grass": "ruoho",
@@ -2343,7 +2342,10 @@
                     "placeholder": "https://www.esimerkki.fi/"
                 },
                 "wetland": {
-                    "label": "Tyyppi"
+                    "label": "Tyyppi",
+                    "options": {
+                        "swamp": "suo"
+                    }
                 },
                 "wheelchair": {
                     "label": "Esteettömyys",
@@ -3116,10 +3118,6 @@
                 "amenity/theatre/type/amphi": {
                     "name": "Amfiteatteri",
                     "terms": "ulkoilmateatteri,ulkoteatteri,ulko,ulkona,ympyrä,kaari,puoliympyrä,puolikaari,muotoinen"
-                },
-                "amenity/toilets": {
-                    "name": "WC",
-                    "terms": "vessa,käymälä,saniteetti,saniteettitila,sanitaatio,pisuaari,pönttö,wc-istuin,wc-pönttö,pesuhuone,pesuallas,tarpeet,uloste,ulostaminen,virtsa,virtsaaminen"
                 },
                 "amenity/toilets/disposal/flush": {
                     "name": "Vesivessa"
@@ -3947,9 +3945,6 @@
                 },
                 "highway/bus_stop": {
                     "name": "Linja-autopysäkki"
-                },
-                "highway/construction": {
-                    "name": "Suljettu tie"
                 },
                 "highway/corridor": {
                     "name": "Sisäkäytävä",
@@ -5010,6 +5005,9 @@
                 "natural/wetland": {
                     "name": "Kosteikko",
                     "terms": "suo,tulvametsä,soistuma"
+                },
+                "natural/wetland/swamp": {
+                    "name": "Suo"
                 },
                 "natural/wood": {
                     "name": "Luonnonvarainen metsä"

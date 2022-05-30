@@ -12,10 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import de.westnordost.streetcomplete.R
 import de.westnordost.streetcomplete.data.osmnotes.deleteImages
 import de.westnordost.streetcomplete.databinding.FragmentAttachPhotoBinding
-import de.westnordost.streetcomplete.ktx.hasCameraPermission
-import de.westnordost.streetcomplete.ktx.toast
-import de.westnordost.streetcomplete.ktx.viewBinding
-import de.westnordost.streetcomplete.util.AdapterDataChangedWatcher
+import de.westnordost.streetcomplete.util.ktx.hasCameraPermission
+import de.westnordost.streetcomplete.util.ktx.toast
+import de.westnordost.streetcomplete.util.viewBinding
+import de.westnordost.streetcomplete.view.AdapterDataChangedWatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.lang.Exception
@@ -29,6 +29,7 @@ class AttachPhotoFragment : Fragment(R.layout.fragment_attach_photo) {
     private lateinit var noteImageAdapter: NoteImageAdapter
 
     val imagePaths: List<String> get() = noteImageAdapter.list
+    var hasGpxAttached = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +46,8 @@ class AttachPhotoFragment : Fragment(R.layout.fragment_attach_photo) {
         binding.takePhotoButton.setOnClickListener { lifecycleScope.launch { takePhoto() } }
         binding.photosList.adapter = noteImageAdapter
         noteImageAdapter.registerAdapterDataObserver(AdapterDataChangedWatcher { updateHintVisibility() })
+
+        binding.attachedGpxView.isGone = !hasGpxAttached
 
         updateHintVisibility()
     }

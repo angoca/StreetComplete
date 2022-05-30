@@ -20,18 +20,18 @@ class AddBenchBackrest : OsmFilterQuestType<BenchBackrestAnswer>() {
           and (!area or area = no)
           and !backrest
           and !bench:type
+          and (!seasonal or seasonal = no)
     """
     override val changesetComment = "Add backrest information to benches"
     override val wikiLink = "Tag:amenity=bench"
     override val icon = R.drawable.ic_quest_bench_poi
     override val isDeleteElementEnabled = true
-
     override val questTypeAchievements = listOf(PEDESTRIAN, OUTDOORS)
 
     override fun getTitle(tags: Map<String, String>) = R.string.quest_bench_backrest_title
 
     override fun getHighlightedElements(element: Element, getMapData: () -> MapDataWithGeometry) =
-        getMapData().filter("nodes, ways with amenity = bench")
+        getMapData().filter("nodes, ways with amenity = bench or leisure = picnic_table")
 
     override fun createForm() = AddBenchBackrestForm()
 

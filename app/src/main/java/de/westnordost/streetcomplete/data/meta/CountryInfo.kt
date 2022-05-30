@@ -22,7 +22,7 @@ enum class SpeedMeasurementUnit(private val displayString: String) {
 
 @Serializable
 enum class WeightMeasurementUnit(val displayString: String) {
-    @SerialName("ton") TON("TONS"),
+    @SerialName("ton") METRIC_TON("TONS"),
     @SerialName("short ton") SHORT_TON("TONS"),
     @SerialName("pound") POUND("POUNDS"),
 }
@@ -55,6 +55,7 @@ data class IncompleteCountryInfo(
     val lengthUnits: List<LengthUnit>? = null,
     val livingStreetSignStyle: String? = null,
     val mobileCountryCode: Int? = null,
+    val noEntrySignStyle: String? = null,
     val noParkingLineStyle: String? = null,
     val noParkingSignStyle: String? = null,
     val noStandingLineStyle: String? = null,
@@ -106,6 +107,8 @@ data class CountryInfo(private val infos: List<IncompleteCountryInfo>) {
         get() = infos.firstNotNullOf { it.isUsuallyAnyGlassRecyclableInContainers }
     val lengthUnits: List<LengthUnit>
         get() = infos.firstNotNullOf { it.lengthUnits }
+    val noEntrySignStyle: String
+        get() = infos.firstNotNullOf { it.noEntrySignStyle }
     val noParkingSignStyle: String
         get() = infos.firstNotNullOf { it.noParkingSignStyle }
     val noStoppingSignStyle: String

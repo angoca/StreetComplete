@@ -331,10 +331,6 @@
                 "charge_toll": {
                     "placeholder": "1 EUR, 5 USD, 10 JPY…"
                 },
-                "circumference": {
-                    "label": "Circumference",
-                    "placeholder": "1 m, 20 cm, 30 in…"
-                },
                 "clothes": {
                     "label": "Clothes"
                 },
@@ -1332,6 +1328,9 @@
                     },
                     "placeholder": "Yes, No, Takeaway Only..."
                 },
+                "toilets": {
+                    "label": "Toilets"
+                },
                 "toilets/disposal": {
                     "label": "Toilet Disposal",
                     "options": {
@@ -1758,7 +1757,7 @@
                     "name": "Car Park"
                 },
                 "amenity/parking/multi-storey": {
-                    "name": "Multistory Car Park"
+                    "name": "Multistorey Car Park"
                 },
                 "amenity/parking_space": {
                     "name": "Parking Space"
@@ -1858,9 +1857,6 @@
                 },
                 "amenity/theatre": {
                     "name": "Theatre"
-                },
-                "amenity/toilets": {
-                    "name": "Toilets"
                 },
                 "amenity/townhall": {
                     "name": "Town Hall"
@@ -3454,7 +3450,8 @@
                     "name": "Shop"
                 },
                 "shop/alcohol": {
-                    "name": "Off licence (Alcohol shop)"
+                    "name": "Off licence (Alcohol shop)",
+                    "terms": "alcohol,beer,booze,wine,off licence,off license"
                 },
                 "shop/antiques": {
                     "name": "Antiques Shop"

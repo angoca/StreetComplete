@@ -4,7 +4,7 @@ import de.westnordost.streetcomplete.R
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmFilterQuestType
 import de.westnordost.streetcomplete.data.osm.osmquests.Tags
 import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement.BICYCLIST
-import de.westnordost.streetcomplete.measure.ArSupportChecker
+import de.westnordost.streetcomplete.screens.measure.ArSupportChecker
 
 class AddCyclewayWidth(
     private val checkArSupport: ArSupportChecker
@@ -40,7 +40,7 @@ class AddCyclewayWidth(
     override val defaultDisabledMessage: Int
         get() = if (!checkArSupport()) R.string.default_disabled_msg_no_ar else 0
 
-    override fun getTitle(tags: Map<String, String>): Int = R.string.quest_cycleway_width_title
+    override fun getTitle(tags: Map<String, String>) = R.string.quest_cycleway_width_title
 
     override fun createForm() = AddWidthForm()
 

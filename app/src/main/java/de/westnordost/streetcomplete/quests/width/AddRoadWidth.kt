@@ -1,12 +1,15 @@
 package de.westnordost.streetcomplete.quests.width
 
 import de.westnordost.streetcomplete.R
-import de.westnordost.streetcomplete.data.meta.ANYTHING_PAVED
-import de.westnordost.streetcomplete.data.meta.ROADS_ASSUMED_TO_BE_PAVED
+import de.westnordost.streetcomplete.data.osm.mapdata.Element
+import de.westnordost.streetcomplete.data.osm.mapdata.MapDataWithGeometry
+import de.westnordost.streetcomplete.data.osm.mapdata.filter
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmFilterQuestType
 import de.westnordost.streetcomplete.data.osm.osmquests.Tags
 import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement
-import de.westnordost.streetcomplete.measure.ArSupportChecker
+import de.westnordost.streetcomplete.osm.ANYTHING_PAVED
+import de.westnordost.streetcomplete.osm.ROADS_ASSUMED_TO_BE_PAVED
+import de.westnordost.streetcomplete.screens.measure.ArSupportChecker
 
 class AddRoadWidth(
     private val checkArSupport: ArSupportChecker
@@ -39,7 +42,10 @@ class AddRoadWidth(
     override val defaultDisabledMessage: Int
         get() = if (!checkArSupport()) R.string.default_disabled_msg_no_ar else 0
 
-    override fun getTitle(tags: Map<String, String>): Int = R.string.quest_road_width_title
+    override fun getTitle(tags: Map<String, String>) = R.string.quest_road_width_title
+
+    override fun getHighlightedElements(element: Element, getMapData: () -> MapDataWithGeometry) =
+        getMapData().filter("nodes with traffic_calming ~ choker|chicane|island|choked_island|choked_table")
 
     override fun createForm() = AddWidthForm()
 

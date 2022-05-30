@@ -12,12 +12,12 @@ import de.westnordost.osmfeatures.FeatureDictionary
 import de.westnordost.osmfeatures.GeometryType
 import de.westnordost.osmfeatures.StringUtils
 import de.westnordost.streetcomplete.R
-import de.westnordost.streetcomplete.data.meta.IS_SHOP_EXPRESSION
 import de.westnordost.streetcomplete.data.osm.mapdata.LatLon
 import de.westnordost.streetcomplete.data.osm.mapdata.Node
 import de.westnordost.streetcomplete.databinding.DialogShopGoneBinding
 import de.westnordost.streetcomplete.databinding.ViewShopTypeBinding
-import de.westnordost.streetcomplete.ktx.toTypedArray
+import de.westnordost.streetcomplete.osm.IS_SHOP_EXPRESSION
+import de.westnordost.streetcomplete.util.ktx.toTypedArray
 
 class ShopGoneDialog(
     context: Context,
@@ -26,7 +26,7 @@ class ShopGoneDialog(
     private val featureDictionary: FeatureDictionary,
     private val onSelectedFeature: (Map<String, String>) -> Unit,
     private val onLeaveNote: () -> Unit
-) : AlertDialog(context, R.style.Theme_Bubble_Dialog) {
+) : AlertDialog(context) {
 
     private val binding: ViewShopTypeBinding
 
