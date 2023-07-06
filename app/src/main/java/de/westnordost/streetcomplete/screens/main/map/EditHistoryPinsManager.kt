@@ -34,15 +34,17 @@ class EditHistoryPinsManager(
     private val resources: Resources
 ) : DefaultLifecycleObserver {
 
-    /** Switch active-ness of edit history pins layer */
-    var isActive: Boolean = false
+    private val viewLifecycleScope: CoroutineScope = CoroutineScope(SupervisorJob())
+
+    /** Switch visibility of edit history pins layer */
+    var isVisible: Boolean = false
         set(value) {
             if (field == value) return
             field = value
-            if (value) start() else stop()
+            if (value) show() else hide()
         }
 
-    private val viewLifecycleScope: CoroutineScope = CoroutineScope(SupervisorJob())
+    private var isStarted: Boolean = false
 
     private val editHistoryListener = object : EditHistorySource.Listener {
         override fun onAdded(edit: Edit) { updatePins() }
@@ -51,19 +53,31 @@ class EditHistoryPinsManager(
         override fun onInvalidated() { updatePins() }
     }
 
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        isStarted = true
+        show()
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+        isStarted = false
+        hide()
+    }
+
     override fun onDestroy(owner: LifecycleOwner) {
-        stop()
         viewLifecycleScope.cancel()
     }
 
-    private fun start() {
+    private fun show() {
+        if (!isStarted || !isVisible) return
         updatePins()
         editHistorySource.addListener(editHistoryListener)
     }
 
-    private fun stop() {
-        pinsMapComponent.clear()
+    private fun hide() {
         viewLifecycleScope.coroutineContext.cancelChildren()
+        viewLifecycleScope.launch { pinsMapComponent.clear() }
         editHistorySource.removeListener(editHistoryListener)
     }
 
@@ -72,9 +86,10 @@ class EditHistoryPinsManager(
 
     private fun updatePins() {
         viewLifecycleScope.launch {
-            if (this@EditHistoryPinsManager.isActive) {
+            if (this@EditHistoryPinsManager.isVisible) {
                 val edits = withContext(Dispatchers.IO) { editHistorySource.getAll() }
-                pinsMapComponent.set(createEditPins(edits))
+                val pins = createEditPins(edits)
+                pinsMapComponent.set(pins)
             }
         }
     }
@@ -103,24 +118,24 @@ private const val EDIT_TYPE_NOTE = "note"
 private const val EDIT_TYPE_HIDE_OSM_NOTE_QUEST = "hide_osm_note_quest"
 private const val EDIT_TYPE_HIDE_OSM_QUEST = "hide_osm_quest"
 
-private fun Edit.toProperties(): Map<String, String> = when (this) {
-    is ElementEdit -> mapOf(
+private fun Edit.toProperties(): List<Pair<String, String>> = when (this) {
+    is ElementEdit -> listOf(
         MARKER_EDIT_TYPE to EDIT_TYPE_ELEMENT,
         MARKER_ID to id.toString()
     )
-    is NoteEdit -> mapOf(
+    is NoteEdit -> listOf(
         MARKER_EDIT_TYPE to EDIT_TYPE_NOTE,
         MARKER_ID to id.toString()
     )
-    is OsmNoteQuestHidden -> mapOf(
+    is OsmNoteQuestHidden -> listOf(
         MARKER_EDIT_TYPE to EDIT_TYPE_HIDE_OSM_NOTE_QUEST,
         MARKER_NOTE_ID to note.id.toString()
     )
-    is OsmQuestHidden -> mapOf(
+    is OsmQuestHidden -> listOf(
         MARKER_EDIT_TYPE to EDIT_TYPE_HIDE_OSM_QUEST,
         MARKER_ELEMENT_TYPE to elementType.name,
         MARKER_ELEMENT_ID to elementId.toString(),
-        MARKER_QUEST_TYPE to questType::class.simpleName!!
+        MARKER_QUEST_TYPE to questType.name
     )
     else -> throw IllegalArgumentException()
 }

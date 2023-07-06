@@ -2,12 +2,13 @@ package de.westnordost.streetcomplete.quests.traffic_signals_vibrate
 
 import de.westnordost.streetcomplete.R
 import de.westnordost.streetcomplete.data.elementfilter.toElementFilterExpression
+import de.westnordost.streetcomplete.data.osm.geometry.ElementGeometry
 import de.westnordost.streetcomplete.data.osm.mapdata.Element
 import de.westnordost.streetcomplete.data.osm.mapdata.MapDataWithGeometry
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmElementQuestType
-import de.westnordost.streetcomplete.data.osm.osmquests.Tags
 import de.westnordost.streetcomplete.data.quest.AllCountriesExcept
-import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement.BLIND
+import de.westnordost.streetcomplete.data.user.achievements.EditTypeAchievement.BLIND
+import de.westnordost.streetcomplete.osm.Tags
 import de.westnordost.streetcomplete.osm.isCrossingWithTrafficSignals
 import de.westnordost.streetcomplete.osm.updateWithCheckDate
 import de.westnordost.streetcomplete.util.ktx.toYesNo
@@ -32,10 +33,10 @@ class AddTrafficSignalsVibration : OsmElementQuestType<Boolean> {
           and foot !~ yes|designated
     """.toElementFilterExpression() }
 
-    override val changesetComment = "Add whether traffic signals have tactile indication that it's safe to cross"
+    override val changesetComment = "Specify whether traffic signals have tactile indications that it's safe to cross"
     override val wikiLink = "Key:$VIBRATING_BUTTON"
     override val icon = R.drawable.ic_quest_blind_traffic_lights
-    override val questTypeAchievements = listOf(BLIND)
+    override val achievements = listOf(BLIND)
     override val enabledInCountries = AllCountriesExcept(
         "RU" // see https://github.com/streetcomplete/StreetComplete/issues/4021
     )
@@ -46,10 +47,9 @@ class AddTrafficSignalsVibration : OsmElementQuestType<Boolean> {
         getMapData().filter { it.isCrossingWithTrafficSignals() }.asSequence()
 
     override fun getApplicableElements(mapData: MapDataWithGeometry): Iterable<Element> {
-        val excludedWayNodeIds = mutableSetOf<Long>()
-        mapData.ways
+        val excludedWayNodeIds = mapData.ways
             .filter { excludedWaysFilter.matches(it) }
-            .flatMapTo(excludedWayNodeIds) { it.nodeIds }
+            .flatMapTo(HashSet()) { it.nodeIds }
 
         return mapData.nodes
             .filter { crossingFilter.matches(it) && it.id !in excludedWayNodeIds }
@@ -60,7 +60,7 @@ class AddTrafficSignalsVibration : OsmElementQuestType<Boolean> {
 
     override fun createForm() = AddTrafficSignalsVibrationForm()
 
-    override fun applyAnswerTo(answer: Boolean, tags: Tags, timestampEdited: Long) {
+    override fun applyAnswerTo(answer: Boolean, tags: Tags, geometry: ElementGeometry, timestampEdited: Long) {
         tags.updateWithCheckDate(VIBRATING_BUTTON, answer.toYesNo())
     }
 }

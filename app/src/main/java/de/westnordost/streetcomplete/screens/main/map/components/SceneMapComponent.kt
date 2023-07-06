@@ -17,7 +17,7 @@ class SceneMapComponent(
     private val ctrl: KtMapController,
     private val vectorTileProvider: VectorTileProvider
 ) {
-    private var sceneUpdates: MutableMap<String, String> = mutableMapOf()
+    private var sceneUpdates: MutableList<List<Pair<String, String>>> = mutableListOf()
 
     private var loadedSceneFilePath: String? = null
     private var loadedSceneUpdates: List<String>? = null
@@ -35,8 +35,14 @@ class SceneMapComponent(
      *
      *  It does NOT reload the scene, you need to call loadScene yourself to reload. Why? Because
      *  you might want to bundle scene updates before you triggere a (re)load of the scene. */
-    fun putSceneUpdates(updates: List<Pair<String, String>>) {
-        sceneUpdates.putAll(updates)
+    fun addSceneUpdates(updates: List<Pair<String, String>>) {
+        sceneUpdates.add(updates)
+    }
+
+    /** Remove the given scene updates */
+    fun removeSceneUpdates(updates: List<Pair<String, String>>) {
+        val idx = sceneUpdates.indexOfLast { updates == it }
+        if (idx != -1) sceneUpdates.removeAt(idx)
     }
 
     /** (Re)load the scene.
@@ -60,7 +66,7 @@ class SceneMapComponent(
     }
 
     private fun getAllSceneUpdates(): List<SceneUpdate> =
-        getBaseSceneUpdates() + sceneUpdates.map { SceneUpdate(it.key, it.value) }
+        getBaseSceneUpdates() + sceneUpdates.flatten().map { SceneUpdate(it.first, it.second) }
 
     private fun getBaseSceneUpdates(): List<SceneUpdate> = listOf(
         SceneUpdate("global.language", Locale.getDefault().language),

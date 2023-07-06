@@ -2,14 +2,15 @@ package de.westnordost.streetcomplete.quests.max_height
 
 import de.westnordost.streetcomplete.R
 import de.westnordost.streetcomplete.data.elementfilter.toElementFilterExpression
+import de.westnordost.streetcomplete.data.osm.geometry.ElementGeometry
 import de.westnordost.streetcomplete.data.osm.geometry.ElementPolylinesGeometry
 import de.westnordost.streetcomplete.data.osm.mapdata.Element
 import de.westnordost.streetcomplete.data.osm.mapdata.MapDataWithGeometry
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmElementQuestType
-import de.westnordost.streetcomplete.data.osm.osmquests.Tags
-import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement.CAR
+import de.westnordost.streetcomplete.data.user.achievements.EditTypeAchievement.CAR
 import de.westnordost.streetcomplete.osm.ALL_PATHS
 import de.westnordost.streetcomplete.osm.ALL_ROADS
+import de.westnordost.streetcomplete.osm.Tags
 import de.westnordost.streetcomplete.util.ktx.containsAny
 import de.westnordost.streetcomplete.util.math.intersects
 
@@ -44,7 +45,7 @@ class AddMaxHeight : OsmElementQuestType<MaxHeightAnswer> {
     private val bridgeFilter by lazy { """
         ways with (
             highway ~ ${(ALL_ROADS + ALL_PATHS).joinToString("|")}
-            or railway ~ rail|light_rail|subway|narrow_gauge|tram|disused|preserved|funicular
+            or railway ~ rail|light_rail|subway|narrow_gauge|tram|disused|preserved|funicular|monorail
           ) and (
             bridge and bridge != no
             or man_made = pipeline and location = overhead
@@ -52,11 +53,10 @@ class AddMaxHeight : OsmElementQuestType<MaxHeightAnswer> {
           and layer
     """.toElementFilterExpression() }
 
-    override val changesetComment = "Add maximum heights"
+    override val changesetComment = "Specify maximum heights"
     override val wikiLink = "Key:maxheight"
     override val icon = R.drawable.ic_quest_max_height
-    override val isSplitWayEnabled = true
-    override val questTypeAchievements = listOf(CAR)
+    override val achievements = listOf(CAR)
 
     override fun getTitle(tags: Map<String, String>): Int {
         val isBelowBridge = tags["amenity"] != "parking_entrance"
@@ -73,10 +73,9 @@ class AddMaxHeight : OsmElementQuestType<MaxHeightAnswer> {
 
     override fun getApplicableElements(mapData: MapDataWithGeometry): Iterable<Element> {
         // amenity = parking_entrance nodes etc. only if they are a vertex in a road
-        val roadsNodeIds = mutableSetOf<Long>()
-        mapData.ways
+        val roadsNodeIds = mapData.ways
             .filter { allRoadsFilter.matches(it) }
-            .flatMapTo(roadsNodeIds) { it.nodeIds }
+            .flatMapTo(HashSet()) { it.nodeIds }
 
         val nodesWithoutHeight = mapData.nodes
             .filter { roadsNodeIds.contains(it.id) && nodeFilter.matches(it) }
@@ -123,7 +122,7 @@ class AddMaxHeight : OsmElementQuestType<MaxHeightAnswer> {
 
     override fun createForm() = AddMaxHeightForm()
 
-    override fun applyAnswerTo(answer: MaxHeightAnswer, tags: Tags, timestampEdited: Long) {
+    override fun applyAnswerTo(answer: MaxHeightAnswer, tags: Tags, geometry: ElementGeometry, timestampEdited: Long) {
         when (answer) {
             is MaxHeight -> {
                 tags["maxheight"] = answer.value.toOsmValue()

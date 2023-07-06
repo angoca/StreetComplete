@@ -1,10 +1,11 @@
 package de.westnordost.streetcomplete.quests.construction
 
 import de.westnordost.streetcomplete.R
+import de.westnordost.streetcomplete.data.osm.geometry.ElementGeometry
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmFilterQuestType
-import de.westnordost.streetcomplete.data.osm.osmquests.Tags
-import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement.CAR
+import de.westnordost.streetcomplete.data.user.achievements.EditTypeAchievement.CAR
 import de.westnordost.streetcomplete.osm.ALL_ROADS
+import de.westnordost.streetcomplete.osm.Tags
 import de.westnordost.streetcomplete.osm.toCheckDateString
 import de.westnordost.streetcomplete.osm.updateCheckDate
 
@@ -19,7 +20,7 @@ class MarkCompletedHighwayConstruction : OsmFilterQuestType<CompletedConstructio
     override val wikiLink = "Tag:highway=construction"
     override val icon = R.drawable.ic_quest_road_construction
     override val hasMarkersAtEnds = true
-    override val questTypeAchievements = listOf(CAR)
+    override val achievements = listOf(CAR)
 
     override fun getTitle(tags: Map<String, String>): Int {
         val isRoad = ALL_ROADS.contains(tags["construction"])
@@ -41,7 +42,7 @@ class MarkCompletedHighwayConstruction : OsmFilterQuestType<CompletedConstructio
 
     override fun createForm() = MarkCompletedConstructionForm()
 
-    override fun applyAnswerTo(answer: CompletedConstructionAnswer, tags: Tags, timestampEdited: Long) {
+    override fun applyAnswerTo(answer: CompletedConstructionAnswer, tags: Tags, geometry: ElementGeometry, timestampEdited: Long) {
         when (answer) {
             is OpeningDateAnswer -> {
                 tags["opening_date"] = answer.date.toCheckDateString()

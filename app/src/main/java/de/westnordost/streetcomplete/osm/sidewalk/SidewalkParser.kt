@@ -6,8 +6,6 @@ import de.westnordost.streetcomplete.osm.sidewalk.Sidewalk.SEPARATE
 import de.westnordost.streetcomplete.osm.sidewalk.Sidewalk.YES
 import de.westnordost.streetcomplete.util.ktx.containsAny
 
-data class LeftAndRightSidewalk(val left: Sidewalk?, val right: Sidewalk?)
-
 /** Returns on which sides are sidewalks. Returns null if there is no sidewalk tagging */
 fun createSidewalkSides(tags: Map<String, String>): LeftAndRightSidewalk? {
     if (!tags.keys.containsAny(KNOWN_SIDEWALK_KEYS)) return null
@@ -20,7 +18,7 @@ fun createSidewalkSides(tags: Map<String, String>): LeftAndRightSidewalk? {
     if (sidewalk != null && altSidewalk != null) return LeftAndRightSidewalk(INVALID, INVALID)
 
     // has sidewalk tagging, but not known
-    if (tags.keys.containsAny(KNOWN_SIDEWALK_KEYS) && sidewalk == null && altSidewalk == null) {
+    if (sidewalk == null && altSidewalk == null) {
         return LeftAndRightSidewalk(INVALID, INVALID)
     }
 
@@ -58,13 +56,14 @@ private fun createSidewalksAlternative(tags: Map<String, String>): LeftAndRightS
     }
 }
 
-private fun createSidewalkSide(tag: String?): Sidewalk = when (tag) {
+private fun createSidewalkSide(tag: String?): Sidewalk? = when (tag) {
     "yes" -> YES
-    "no" -> NO
+    "no", "none" -> NO
     "separate" -> SEPARATE
+    null -> null
     else -> INVALID
 }
 
-private val KNOWN_SIDEWALK_KEYS = listOf(
+val KNOWN_SIDEWALK_KEYS = listOf(
     "sidewalk", "sidewalk:left", "sidewalk:right", "sidewalk:both"
 )

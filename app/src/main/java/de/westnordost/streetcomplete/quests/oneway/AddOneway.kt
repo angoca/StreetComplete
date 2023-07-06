@@ -2,13 +2,14 @@ package de.westnordost.streetcomplete.quests.oneway
 
 import de.westnordost.streetcomplete.R
 import de.westnordost.streetcomplete.data.elementfilter.toElementFilterExpression
+import de.westnordost.streetcomplete.data.osm.geometry.ElementGeometry
 import de.westnordost.streetcomplete.data.osm.mapdata.Element
 import de.westnordost.streetcomplete.data.osm.mapdata.MapDataWithGeometry
 import de.westnordost.streetcomplete.data.osm.mapdata.Way
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmElementQuestType
-import de.westnordost.streetcomplete.data.osm.osmquests.Tags
-import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement.CAR
+import de.westnordost.streetcomplete.data.user.achievements.EditTypeAchievement.CAR
 import de.westnordost.streetcomplete.osm.ALL_ROADS
+import de.westnordost.streetcomplete.osm.Tags
 import de.westnordost.streetcomplete.osm.estimateUsableRoadwayWidth
 import de.westnordost.streetcomplete.quests.oneway.OnewayAnswer.BACKWARD
 import de.westnordost.streetcomplete.quests.oneway.OnewayAnswer.FORWARD
@@ -29,12 +30,11 @@ class AddOneway : OsmElementQuestType<OnewayAnswer> {
          and (access !~ private|no or (foot and foot !~ private|no))
     """.toElementFilterExpression() }
 
-    override val changesetComment = "Add whether this road is a one-way road because it is quite slim"
+    override val changesetComment = "Specify whether narrow roads are one-ways"
     override val wikiLink = "Key:oneway"
     override val icon = R.drawable.ic_quest_oneway
     override val hasMarkersAtEnds = true
-    override val isSplitWayEnabled = true
-    override val questTypeAchievements = listOf(CAR)
+    override val achievements = listOf(CAR)
 
     override fun getTitle(tags: Map<String, String>) = R.string.quest_oneway2_title
 
@@ -80,7 +80,7 @@ class AddOneway : OsmElementQuestType<OnewayAnswer> {
 
     override fun createForm() = AddOnewayForm()
 
-    override fun applyAnswerTo(answer: OnewayAnswer, tags: Tags, timestampEdited: Long) {
+    override fun applyAnswerTo(answer: OnewayAnswer, tags: Tags, geometry: ElementGeometry, timestampEdited: Long) {
         tags["oneway"] = when (answer) {
             FORWARD -> "yes"
             BACKWARD -> "-1"

@@ -2,12 +2,13 @@ package de.westnordost.streetcomplete.quests.level
 
 import de.westnordost.streetcomplete.R
 import de.westnordost.streetcomplete.data.elementfilter.toElementFilterExpression
+import de.westnordost.streetcomplete.data.osm.geometry.ElementGeometry
 import de.westnordost.streetcomplete.data.osm.geometry.ElementPolygonsGeometry
 import de.westnordost.streetcomplete.data.osm.mapdata.Element
 import de.westnordost.streetcomplete.data.osm.mapdata.MapDataWithGeometry
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmElementQuestType
-import de.westnordost.streetcomplete.data.osm.osmquests.Tags
-import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement.CITIZEN
+import de.westnordost.streetcomplete.data.user.achievements.EditTypeAchievement.CITIZEN
+import de.westnordost.streetcomplete.osm.Tags
 import de.westnordost.streetcomplete.osm.isShopExpressionFragment
 import de.westnordost.streetcomplete.util.math.contains
 import de.westnordost.streetcomplete.util.math.isInMultipolygon
@@ -34,10 +35,10 @@ class AddLevel : OsmElementQuestType<String> {
     private val filter by lazy { """
         nodes with
          (${isShopExpressionFragment()})
-         and !level and (name or brand)
+         and !level
     """.toElementFilterExpression() }
 
-    override val changesetComment = "Add level to shops"
+    override val changesetComment = "Determine on which level shops are in a building"
     override val wikiLink = "Key:level"
     override val icon = R.drawable.ic_quest_level
     /* disabled because in a mall with multiple levels, if there are nodes with no level defined,
@@ -45,7 +46,7 @@ class AddLevel : OsmElementQuestType<String> {
     *  the user cannot find the place on any level in the mall, delete the element completely. */
     override val isReplaceShopEnabled = false
     override val isDeleteElementEnabled = true
-    override val questTypeAchievements = listOf(CITIZEN)
+    override val achievements = listOf(CITIZEN)
 
     override fun getTitle(tags: Map<String, String>) = R.string.quest_level_title2
 
@@ -112,7 +113,7 @@ class AddLevel : OsmElementQuestType<String> {
 
     override fun createForm() = AddLevelForm()
 
-    override fun applyAnswerTo(answer: String, tags: Tags, timestampEdited: Long) {
+    override fun applyAnswerTo(answer: String, tags: Tags, geometry: ElementGeometry, timestampEdited: Long) {
         tags["level"] = answer
     }
 }

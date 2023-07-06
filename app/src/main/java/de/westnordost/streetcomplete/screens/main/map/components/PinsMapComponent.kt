@@ -7,24 +7,21 @@ import de.westnordost.streetcomplete.screens.main.map.tangram.KtMapController
 import de.westnordost.streetcomplete.screens.main.map.tangram.toLngLat
 
 /** Takes care of displaying pins on the map, e.g. quest pins or pins for recent edits */
-class PinsMapComponent(ctrl: KtMapController) {
+class PinsMapComponent(private val ctrl: KtMapController) {
 
     private val pinsLayer: MapData = ctrl.addDataLayer(PINS_LAYER)
 
-    /** Shows/hids the pins */
+    /** Shows/hides the pins */
     var isVisible: Boolean
         get() = pinsLayer.visible
-        set(value) { pinsLayer.visible = value }
+        set(value) {
+            pinsLayer.visible = value
+            ctrl.requestRender()
+        }
 
     /** Show given pins. Previously shown pins are replaced with these.  */
     fun set(pins: Collection<Pin>) {
-        pinsLayer.setFeatures(pins.map { pin ->
-            Point(pin.position.toLngLat(), mapOf(
-                "type" to "point",
-                "kind" to pin.iconName,
-                "importance" to pin.importance.toString()
-            ) + pin.properties)
-        })
+        pinsLayer.setFeatures(pins.map { it.tangramPoint })
     }
 
     /** Clear pins */
@@ -41,6 +38,19 @@ class PinsMapComponent(ctrl: KtMapController) {
 data class Pin(
     val position: LatLon,
     val iconName: String,
-    val properties: Map<String, String> = emptyMap(),
+    val properties: Collection<Pair<String, String>> = emptyList(),
     val importance: Int = 0
-)
+) {
+    val tangramPoint by lazy {
+        // avoid creation of intermediate HashMaps.
+        val tangramProperties = listOf(
+            "type" to "point",
+            "kind" to iconName,
+            "importance" to importance.toString()
+        )
+        val props = HashMap<String, String>(properties.size + tangramProperties.size, 1f)
+        props.putAll(tangramProperties)
+        props.putAll(properties)
+        Point(position.toLngLat(), props)
+    }
+}

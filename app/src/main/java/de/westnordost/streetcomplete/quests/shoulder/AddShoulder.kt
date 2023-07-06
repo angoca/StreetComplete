@@ -1,11 +1,12 @@
 package de.westnordost.streetcomplete.quests.shoulder
 
 import de.westnordost.streetcomplete.R
+import de.westnordost.streetcomplete.data.osm.geometry.ElementGeometry
 import de.westnordost.streetcomplete.data.osm.osmquests.OsmFilterQuestType
-import de.westnordost.streetcomplete.data.osm.osmquests.Tags
-import de.westnordost.streetcomplete.data.user.achievements.QuestTypeAchievement.CAR
-import de.westnordost.streetcomplete.osm.ANYTHING_UNPAVED
+import de.westnordost.streetcomplete.data.user.achievements.EditTypeAchievement.CAR
 import de.westnordost.streetcomplete.osm.MAXSPEED_TYPE_KEYS
+import de.westnordost.streetcomplete.osm.Tags
+import de.westnordost.streetcomplete.osm.surface.ANYTHING_UNPAVED
 
 class AddShoulder : OsmFilterQuestType<ShoulderSides>() {
 
@@ -23,13 +24,13 @@ class AddShoulder : OsmFilterQuestType<ShoulderSides>() {
               highway ~ trunk|primary|secondary|tertiary|unclassified
               and (
                 motorroad = yes
+                or expressway = yes
                 or tunnel ~ yes|building_passage|avalanche_protector
                 or bridge = yes
                 or sidewalk ~ no|none
                 or !maxspeed and highway = trunk
                 or maxspeed > 50
-                or maxspeed ~ "(3[5-9]|[4-9][0-9]|1[0-9][0-9]) mph"
-                or ~${(MAXSPEED_TYPE_KEYS + "maxspeed").joinToString("|")} ~ ".*(rural|trunk|motorway|nsl_single|nsl_dual)"
+                or ~"${(MAXSPEED_TYPE_KEYS + "maxspeed").joinToString("|")}" ~ ".*:(rural|trunk|motorway|nsl_single|nsl_dual)"
               )
             ) or (
               highway ~ motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified
@@ -51,17 +52,16 @@ class AddShoulder : OsmFilterQuestType<ShoulderSides>() {
           and !shoulder:left and !shoulder:right and !shoulder:both
           and (access !~ private|no or (foot and foot !~ private|no))
     """
-    override val changesetComment = "Add whether there are shoulders"
+    override val changesetComment = "Specify whether roads have shoulders"
     override val wikiLink = "Key:shoulder"
     override val icon = R.drawable.ic_quest_street_shoulder
-    override val isSplitWayEnabled = true
-    override val questTypeAchievements = listOf(CAR)
+    override val achievements = listOf(CAR)
 
     override fun getTitle(tags: Map<String, String>) = R.string.quest_shoulder_title
 
     override fun createForm() = AddShoulderForm()
 
-    override fun applyAnswerTo(answer: ShoulderSides, tags: Tags, timestampEdited: Long) {
+    override fun applyAnswerTo(answer: ShoulderSides, tags: Tags, geometry: ElementGeometry, timestampEdited: Long) {
         tags["shoulder"] = answer.osmValue
     }
 }
